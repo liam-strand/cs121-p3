@@ -3,14 +3,24 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 
 public class TestMethods {
-    public List<Method> tests = new ArrayList<>();
-    public List<Method> before_class = new ArrayList<>();
-    public List<Method> after_class = new ArrayList<>();
-    public List<Method> before = new ArrayList<>();
-    public List<Method> after = new ArrayList<>();
+    private List<Method> tests = new ArrayList<>();
+    private List<Method> before_class = new ArrayList<>();
+    private List<Method> after_class = new ArrayList<>();
+    private List<Method> before = new ArrayList<>();
+    private List<Method> after = new ArrayList<>();
+    private Class<?> c;
+
+    private enum MethodType {
+        TESTS,
+        BEFORE_CLASS,
+        AFTER_CLASS,
+        BEFORE,
+        AFTER
+    }
 
     public TestMethods(Class<?> c) {
         Method all_meths[] = c.getMethods();
+        this.c = c;
 
         for (Method m : all_meths) {
             Annotation as[] = m.getAnnotations();
@@ -21,12 +31,12 @@ public class TestMethods {
                     important_as.add(a);
                 }
             }
-            processAnnotation(m, important_as);
+            processMeth(m, important_as);
         }
         sort();
     }
 
-    private void processAnnotation(Method m, List<Annotation> as) {
+    private void processMeth(Method m, List<Annotation> as) {
         if (as.size() == 1) {
             Annotation a = as.get(0);
             if (a instanceof Test) {
@@ -60,7 +70,61 @@ public class TestMethods {
         return result;
     }
 
-    public void sort() {
+    public void runBefore() {
+        runMeths(MethodType.BEFORE_CLASS);
+    }
+
+    public void runAfter() {
+        runMeths(MethodType.AFTER_CLASS);
+    }
+
+    public Map<String, Throwable> runTests() {
+        Map<String, Throwable> results = new HashMap<>();
+        
+        for (Method t : tests) {
+            runMeths(MethodType.BEFORE);
+            try {
+                t.invoke(c, (Object[])null);
+                results.put(t.getName(), null);
+            } catch (InvocationTargetException ex) {
+                results.put(t.getName(), ex.getCause());
+            } catch (IllegalAccessException ex) {
+                throw new IllegalAccessError();
+            }
+            runMeths(MethodType.AFTER);
+        }
+
+        return results;
+    }
+
+    private void runMeths(MethodType mt) {
+
+        List<Method> meths;
+        
+        if (mt == MethodType.BEFORE_CLASS) {
+            meths = before_class;
+        } else if (mt == MethodType.AFTER_CLASS) {
+            meths = after_class;
+        } else if (mt == MethodType.BEFORE) {
+            meths = before;
+        } else if (mt == MethodType.AFTER) {
+            meths = after;
+        } else {
+            meths = tests;
+        }
+
+        for (Method m : meths) {
+            try {
+                m.invoke(c, (Object[])null);
+            } catch (InvocationTargetException ex) {
+                throw new BadMethodException();
+            } catch (IllegalAccessException ex) {
+                throw new BadMethodException();
+            }
+        }
+    }
+
+    private void sort() {
         Collections.sort(tests, (o1, o2) -> o1.getName().compareTo(o2.getName()));
         Collections.sort(before_class, (o1, o2) -> o1.getName().compareTo(o2.getName()));
         Collections.sort(after_class, (o1, o2) -> o1.getName().compareTo(o2.getName()));

@@ -16,6 +16,22 @@ public class SomeClass {
         throw new RuntimeException("hey this was an intentional failure");
     }
 
+    @Test
+    public static void assertingObjectAffirmativeTest() {
+        Character s = 'l';
+
+        Assertion.assertThat((Object)s).isEqualTo('l').isNotNull().isInstanceOf(Character.class);
+
+        Assertion.assertThat((Object)null).isNotEqualTo("jeff").isNull();
+    }
+
+    @Test
+    public static void assertingObjectNegativeTest() {
+        Character c = 'z';
+
+        Assertion.assertThat((Object)c).isEqualTo('a');
+    }
+
     @Before
     public static void print_something() {
         if (DEBUG) { 
