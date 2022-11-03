@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Main {
+public class TestingMain {
     public static void main(String[] args) {
         Map<String, Throwable> tests = Unit.testClass("SomeClass");
         printTests(tests);

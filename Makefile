@@ -2,7 +2,7 @@
 
 run: 
 	javac *.java
-	java -ea Main
+	java -ea TestingMain
 
 clean:
 	rm *.class

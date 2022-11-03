@@ -8,7 +8,6 @@ public class TestMethods {
     private List<Method> after_class = new ArrayList<>();
     private List<Method> before = new ArrayList<>();
     private List<Method> after = new ArrayList<>();
-    private Class<?> c;
     private Object o;
 
     private enum MethodType {
@@ -21,7 +20,6 @@ public class TestMethods {
 
     public TestMethods(Class<?> c) {
         Method all_meths[] = c.getMethods();
-        this.c = c;
         o = instantiateClass(c);
         for (Method m : all_meths) {
             Annotation as[] = m.getAnnotations();
