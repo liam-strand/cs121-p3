@@ -14,8 +14,14 @@ public class Unit {
     }
 
     public static Map<String, Object[]> quickCheckClass(String name) {
-        throw new UnsupportedOperationException();
+        Class<?> c = getClassFromString(name);
+
+        PropertyMethods meths = new PropertyMethods(c);
+        
+        return meths.run();
     }
+
+    
 
     private static Class<?> getClassFromString(String name) {
         try {

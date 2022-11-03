@@ -17,17 +17,13 @@ public class AssertingObject {
         return this;
     }
     public AssertingObject isEqualTo(Object o2) {
-        if (o == null && o2 != null) {
-            throw new AssertionError(String.format("%s is null but %s is not, so they are not equal", o.toString(), o2.toString()));
-        } else if (o != null && !o.equals(o2)) {
+        if (!o.equals(o2)) {
             throw new AssertionError(String.format("%s is not equal to %s", o.toString(), o2.toString()));
         }
         return this;
     }
     public AssertingObject isNotEqualTo(Object o2) {
-        if (o == null && o2 == null) {
-            throw new AssertionError(String.format("%s and %s are null, so they are equal", o.toString(), o2.toString()));
-        } else if (o != null && o.equals(o2)) {
+        if (o.equals(o2)) {
             throw new AssertionError(String.format("%s is equal to %s", o.toString(), o2.toString()));
         }
         return this;

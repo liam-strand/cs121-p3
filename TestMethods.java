@@ -9,6 +9,7 @@ public class TestMethods {
     private List<Method> before = new ArrayList<>();
     private List<Method> after = new ArrayList<>();
     private Class<?> c;
+    private Object o;
 
     private enum MethodType {
         TESTS,
@@ -21,7 +22,7 @@ public class TestMethods {
     public TestMethods(Class<?> c) {
         Method all_meths[] = c.getMethods();
         this.c = c;
-
+        o = instantiateClass(c);
         for (Method m : all_meths) {
             Annotation as[] = m.getAnnotations();
             List<Annotation> important_as = new ArrayList<>();
@@ -84,7 +85,7 @@ public class TestMethods {
         for (Method t : tests) {
             runMeths(MethodType.BEFORE);
             try {
-                t.invoke(c, (Object[])null);
+                t.invoke(o, (Object[])null);
                 results.put(t.getName(), null);
             } catch (InvocationTargetException ex) {
                 results.put(t.getName(), ex.getCause());
@@ -115,7 +116,7 @@ public class TestMethods {
 
         for (Method m : meths) {
             try {
-                m.invoke(c, (Object[])null);
+                m.invoke(o, (Object[])null);
             } catch (InvocationTargetException ex) {
                 throw new BadMethodException();
             } catch (IllegalAccessException ex) {
@@ -130,5 +131,19 @@ public class TestMethods {
         Collections.sort(after_class, (o1, o2) -> o1.getName().compareTo(o2.getName()));
         Collections.sort(before, (o1, o2) -> o1.getName().compareTo(o2.getName()));
         Collections.sort(after, (o1, o2) -> o1.getName().compareTo(o2.getName()));
+    }
+
+    private Object instantiateClass(Class<?> c) {
+        try {
+            return c.getConstructor().newInstance();
+        } catch (NoSuchMethodException ex) {
+            throw new BadClassException();
+        } catch (IllegalAccessException ex) {
+            throw new BadClassException();
+        } catch (InvocationTargetException ex) {
+            throw new BadClassException();
+        } catch (InstantiationException ex) {
+            throw new BadClassException();
+        }
     }
 }

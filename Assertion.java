@@ -5,15 +5,15 @@ public class Assertion {
         return new AssertingObject(o);
     }
 
-    static Object assertThat(String s) {
-        throw new UnsupportedOperationException();
+    static AssertingString assertThat(String s) {
+        return new AssertingString(s);
     }
 
-    static Object assertThat(boolean b) {
+    static AssertingBoolean assertThat(boolean b) {
         return new AssertingBoolean(b);
     }
 
-    static Object assertThat(int i) {
-        throw new UnsupportedOperationException();
+    static AssertingInteger assertThat(int i) {
+        return new AssertingInteger(i);
     }
 }
