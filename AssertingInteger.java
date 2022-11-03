@@ -5,19 +5,19 @@ public class AssertingInteger {
     }
     public AssertingInteger isEqualTo(int i2) {
         if (i != i2) {
-            throw new AssertionError(String.format("%d != %d", i, i2));
+            throw new AssertionException();
         }
         return this;
     }
     public AssertingInteger isLessThan(int i2) {
         if (i >= i2) {
-            throw new AssertionError(String.format("%d >= %d", i, i2));
+            throw new AssertionException();
         }
         return this;
     }
     public AssertingInteger isGreaterThan(int i2) {
         if (i <= i2) {
-            throw new AssertionError(String.format("%d <= %d", i, i2));
+            throw new AssertionException();
         }
         return this;
     }
