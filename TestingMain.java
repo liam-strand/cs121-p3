@@ -47,10 +47,28 @@ public class TestingMain {
         Collections.sort(testnames);
         String formatter = String.format("%%%ds %%s%s", longest_test, ConsoleColors.RESET);
         for (String s : testnames) {
-            Object[] ex = props.get(s);
-            boolean success = ex == null;
-            String report = (success ? String.format("%sPASS", ConsoleColors.GREEN) 
-                                     : String.format("%sFAIL -> %s", ConsoleColors.RED, ex.toString()));
+            Object[] args = props.get(s);
+            boolean success = args == null;
+            String report;
+            if (success) {
+                report = String.format("%sPASS", ConsoleColors.GREEN);
+            } else {
+                String args_str = "[";
+                for (int i = 0; i < args.length; i++) {
+                    Object arg = args[i];
+                    if (i != 0) {
+                        args_str += ", ";
+                    }
+                    if (arg instanceof String) {
+                        args_str = args_str + "\"" + arg.toString() + "\"";
+                    } else {
+                        args_str += arg.toString();
+                    }
+                }
+                args_str += "]";
+                report = String.format("%sFAIL -> %s", ConsoleColors.RED, args_str);
+            }
+
             String raw_line = String.format(formatter, s, report);
             System.out.println(raw_line);
         }

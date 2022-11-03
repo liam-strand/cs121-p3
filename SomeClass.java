@@ -102,7 +102,7 @@ public class SomeClass {
     } 
 
     @Property
-    public boolean isS2(@StringSet(strings={"s1", "s2", "s3"}) String s) {
+    public boolean isS2(@StringSet(strings={"s1", "s2", "s3", "a1"}) String s) {
         if(DEBUG) {
             System.out.println(s);
         }
@@ -118,6 +118,13 @@ public class SomeClass {
 
     @Property
     public void listOfLists(@ListLength(min=0, max=2) List<@ListLength(min=0, max=2) List<@IntRange(min=5, max=7) Integer>> l) {
+        if(DEBUG) {
+            System.out.println(l.toString());
+        }
+    }
+
+    @Property
+    public void deepLists(@ListLength(min=0, max=2) List<@ListLength(min=0, max=2) List<@ListLength(min=0, max=2) List<@ListLength(min=0, max=2) List<@IntRange(min=5, max=5) Integer>>>> l) {
         if(DEBUG) {
             System.out.println(l.toString());
         }

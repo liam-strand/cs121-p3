@@ -5,4 +5,4 @@ run:
 	java -ea TestingMain
 
 clean:
-	rm *.class
+	rm -f *.class
