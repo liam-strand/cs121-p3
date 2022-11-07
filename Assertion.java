@@ -1,6 +1,13 @@
+/* Assertion.java
+ * 
+ * By: Liam Strand
+ * On: November 2022
+ * 
+ * A class that generates asserting objects for fluent assertions.
+ */
+
 public class Assertion {
 
-    /* You'll need to change the return type of the assertThat methods */
     static AssertingObject assertThat(Object o) {
         return new AssertingObject(o);
     }

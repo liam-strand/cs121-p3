@@ -1,3 +1,11 @@
+/* ListLength.java
+ * 
+ * By: Liam Strand
+ * On: November 2022
+ * 
+ * A type annotation that indicates we want to test a range of list length.
+ */
+
 import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)

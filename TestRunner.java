@@ -1,11 +1,22 @@
+/* TestRunner.java
+ * 
+ * By: Liam Strand
+ * On: November 2022
+ * 
+ * Runs and prints the tests in the provided class.
+ */
+
 import java.util.*;
 
-public class TestingMain {
+public class TestRunner {
     public static void main(String[] args) {
-        Map<String, Throwable> tests = Unit.testClass("SomeClass");
+
+        System.out.printf("Testing: %s\n\n", args[0]);
+
+        Map<String, Throwable> tests = Unit.testClass(args[0]);
         printTests(tests);
 
-        Map<String, Object[]> props = Unit.quickCheckClass("SomeClass");
+        Map<String, Object[]> props = Unit.quickCheckClass(args[0]);
         printProps(props);
     }
     

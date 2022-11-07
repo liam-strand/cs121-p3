@@ -1,3 +1,12 @@
+/* TestMethods.java
+ * 
+ * By: Liam Strand
+ * On: November 2022
+ * 
+ * A class that parses, maintains, and runs the Test methods of the class
+ * that we are trying to test.
+ */
+
 import java.util.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;

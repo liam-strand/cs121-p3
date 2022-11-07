@@ -1,3 +1,11 @@
+/* AssertingBoolean.java
+ * 
+ * By: Liam Strand
+ * On: November 2022
+ * 
+ * An object that wraps around a boolean and enables fluent assertions
+ */
+
 public class AssertingBoolean {
     private boolean b;
     public AssertingBoolean(boolean b) {

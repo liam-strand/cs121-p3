@@ -1,3 +1,11 @@
+/* AssertingString.java
+ * 
+ * By: Liam Strand
+ * On: November 2022
+ * 
+ * A wrapper around a String that enables fluent assertions.
+ */
+
 public class AssertingString {
     private String s;
     public AssertingString(String s) {

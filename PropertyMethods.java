@@ -1,3 +1,12 @@
+/* PropertyMethods.java
+ * 
+ * By: Liam Strand
+ * On: November 2022
+ * 
+ * A class that parses, maintains, and runs the Property methods of the class
+ * that we are trying to test.
+ */
+
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.IntStream;
@@ -43,6 +52,7 @@ public class PropertyMethods {
     private Object[] process(Method m) {
         Parameter raw_params[] = getParams(m);
         List<Object[]> params = generateParams(raw_params);
+
         int len = params.size() < 100 ? params.size() : 100;
         for (int i = 0; i < len; i++) {
             Object[] args = params.get(i);
@@ -92,10 +102,10 @@ public class PropertyMethods {
         } while (notDoneYet(pos));
 
         return gen_plists;
+
     }
 
     private List<Object> processParam(AnnotatedType p) {
-
         if (p.getAnnotation(IntRange.class) != null) {
             List<Integer> ints = processInteger(p);
             return new ArrayList<Object>(ints);

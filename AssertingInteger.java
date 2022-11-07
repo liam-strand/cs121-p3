@@ -1,3 +1,11 @@
+/* AssertingInteger.java
+ * 
+ * By: Liam Strand
+ * On: November 2022
+ * 
+ * A wrapper around an Integer that enables fluent assertions.
+ */
+
 public class AssertingInteger {
     private int i;
     public AssertingInteger(int i) {

@@ -1,3 +1,11 @@
+/* SomeClass.java
+ * 
+ * By: Liam Strand
+ * On: November 2022
+ * 
+ * A test class that tests the testing framework.
+ */
+
 import java.util.*;
 
 public class SomeClass {
@@ -102,11 +110,11 @@ public class SomeClass {
     } 
 
     @Property
-    public boolean isS2(@StringSet(strings={"s1", "s2", "s3", "a1"}) String s) {
+    public boolean isS2(@StringSet(strings={"s1", "s2", "s3", "a1"}) String s, @IntRange(min=0, max=2) Integer i) {
         if(DEBUG) {
             System.out.println(s);
         }
-        return s.startsWith("s");
+        return true;
     }
 
     @Property

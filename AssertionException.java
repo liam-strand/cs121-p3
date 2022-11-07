@@ -1,3 +1,11 @@
+/* AssertionException.java
+ * 
+ * By: Liam Strand
+ * On: November 2022
+ * 
+ * A runtime exception that is thrown by the fluent assertion system.
+ */
+
 public class AssertionException extends RuntimeException {
     public AssertionException() {
         super();

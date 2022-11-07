@@ -1,3 +1,11 @@
+/* AssertingObject.java
+ * 
+ * By: Liam Strand
+ * On: November 2022
+ * 
+ * A wrapper around an Object that enables fluent assertions.
+ */
+
 public class AssertingObject {
     private Object o;
     public AssertingObject(Object o) {
