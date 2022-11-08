@@ -8,6 +8,7 @@
  */
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 
@@ -133,11 +134,12 @@ public class TestMethods {
     }
 
     private void sort() {
-        Collections.sort(tests, (o1, o2) -> o1.getName().compareTo(o2.getName()));
-        Collections.sort(before_class, (o1, o2) -> o1.getName().compareTo(o2.getName()));
-        Collections.sort(after_class, (o1, o2) -> o1.getName().compareTo(o2.getName()));
-        Collections.sort(before, (o1, o2) -> o1.getName().compareTo(o2.getName()));
-        Collections.sort(after, (o1, o2) -> o1.getName().compareTo(o2.getName()));
+        BiFunction<Method, Method, Integer> comparitor = (o1, o2) -> o1.getName().compareTo(o2.getName());
+        Collections.sort(tests,        comparitor::apply);
+        Collections.sort(before_class, comparitor::apply);
+        Collections.sort(after_class,  comparitor::apply);
+        Collections.sort(before,       comparitor::apply);
+        Collections.sort(after,        comparitor::apply);
     }
 
     private Object instantiateClass(Class<?> c) {

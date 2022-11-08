@@ -10,6 +10,7 @@ import java.util.*;
 
 public class SomeClass {
     static final boolean DEBUG = false;
+    private Integer counter = 7;
 
     @Test
     public static void test1() {
@@ -118,28 +119,31 @@ public class SomeClass {
     }
 
     @Property
-    public void listOfInts(@ListLength(min=0, max=2) List<@IntRange(min=5, max=7) Integer> l) {
+    public boolean listOfInts(@ListLength(min=0, max=2) List<@IntRange(min=5, max=7) Integer> l) {
         if(DEBUG) {
             System.out.println(l.toString());
         }
+        return true;
     }
 
     @Property
-    public void listOfLists(@ListLength(min=0, max=2) List<@ListLength(min=0, max=2) List<@IntRange(min=5, max=7) Integer>> l) {
+    public boolean listOfLists(@ListLength(min=0, max=2) List<@ListLength(min=0, max=2) List<@IntRange(min=5, max=7) Integer>> l) {
         if(DEBUG) {
             System.out.println(l.toString());
         }
+        return true;
     }
 
     @Property
-    public void deepLists(@ListLength(min=0, max=2) List<@ListLength(min=0, max=2) List<@ListLength(min=0, max=2) List<@ListLength(min=0, max=2) List<@IntRange(min=5, max=5) Integer>>>> l) {
+    public boolean deepLists(@ListLength(min=0, max=2) List<@ListLength(min=0, max=2) List<@ListLength(min=0, max=2) List<@ListLength(min=0, max=2) List<@IntRange(min=5, max=5) Integer>>>> l) {
         if(DEBUG) {
             System.out.println(l.toString());
         }
+        return true;
     }
 
     @Property
-    public void objectGen(@ForAll(name="genSeven", times=10) Object i) {
+    public boolean objectGen(@ForAll(name="genSeven", times=10) Object i) {
         if(DEBUG) {
             System.out.println(i.toString());
         }
@@ -147,13 +151,22 @@ public class SomeClass {
         if (i instanceof Integer) {
             Integer i_nt = (Integer)i;
             i_nt += 1;
-        } else {
-            throw new RuntimeException();
-        }
+        } 
+        return true;
+    }
 
+    @Property
+    public boolean intGen(@ForAll(name="genInt", times=10) Object i) {
+        Integer in = (Integer)i;
+        return in < 20;
     }
 
     public Object genSeven() {
         return 7;
+    }
+
+    public Object genInt() {
+        counter++;
+        return (Object)counter;
     }
 }
