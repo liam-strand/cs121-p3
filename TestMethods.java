@@ -13,11 +13,11 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 
 public class TestMethods {
-    private List<Method> tests = new ArrayList<>();
-    private List<Method> before_class = new ArrayList<>();
-    private List<Method> after_class = new ArrayList<>();
-    private List<Method> before = new ArrayList<>();
-    private List<Method> after = new ArrayList<>();
+    private List<TestMethod> tests = new ArrayList<>();
+    private List<UtilMethod> before_class = new ArrayList<>();
+    private List<UtilMethod> after_class = new ArrayList<>();
+    private List<UtilMethod> before = new ArrayList<>();
+    private List<UtilMethod> after = new ArrayList<>();
     private Object o;
 
     private enum MethodType {
@@ -28,47 +28,75 @@ public class TestMethods {
         AFTER
     }
 
+    /* constructor
+     *    Purpose: Instantiates an object containing all the testing and
+     *             associated methods in the provided class
+     * Parameters: A class name
+     */
+    public TestMethods(String name) {
+        this(getClassFromString(name));
+    }
+
+    /* constructor
+     *    Purpose: Instantiates an object containing all the testing and
+     *             associated methods in the provided class
+     * Parameters: A reflected class object
+     */
     public TestMethods(Class<?> c) {
         Method all_meths[] = c.getMethods();
         o = instantiateClass(c);
         for (Method m : all_meths) {
-            Annotation as[] = m.getAnnotations();
-            List<Annotation> important_as = new ArrayList<>();
-
-            for (Annotation a : as) {
-                if (isImportantAnnotation(a)) {
-                    important_as.add(a);
-                }
-            }
-            processMeth(m, important_as);
+            processMeth(m);
         }
         sort();
     }
 
-    private void processMeth(Method m, List<Annotation> as) {
-        if (as.size() == 1) {
-            Annotation a = as.get(0);
+    /* processMeth
+     *    Purpose: Takes a method and its annotations and puts it in the  
+     *             appropriate category
+     * Parameters: A Method to process
+     *    Returns: none
+     *    Effects: Adds to the method lists
+     */
+    private void processMeth(Method m) {
+        Annotation as[] = m.getAnnotations();
+        List<Annotation> important_as = new ArrayList<>();
+
+        for (Annotation a : as) {
+            if (isImportantAnnotation(a)) {
+                important_as.add(a);
+            }
+        }
+        if (important_as.size() == 1) {
+            Annotation a = as[0];
             if (a instanceof Test) {
-                tests.add(m);
+                tests.add(new TestMethod(m, o));
             } else if (a instanceof Before) {
-                before.add(m);
+                before.add(new UtilMethod(m, o));
             } else if (a instanceof After) {
-                after.add(m);
+                after.add(new UtilMethod(m, o));
             } else  {
                 if (!Modifier.isStatic(m.getModifiers())) {
                     throw new IncompatibleAnnotationsException();
                 }
                 if (a instanceof BeforeClass) {
-                    before_class.add(m);
+                    before_class.add(new UtilMethod(m, o));
                 } else {
-                    after_class.add(m);
+                    after_class.add(new UtilMethod(m, o));
                 }
             }
-        } else if (as.size() > 1) {
+        } else if (important_as.size() > 1) {
             throw new IncompatibleAnnotationsException();
         }
     }
     
+    /* isImportantAnnotation
+     *    Purpose: Checks to see if a given annotation is one of the 
+     *             annotations we care about.
+     * Parameters: An annotation to examine
+     *    Returns: True if we care, false if not.
+     *    Effects: none
+     */
     private static boolean isImportantAnnotation(Annotation a) {
         boolean result = a instanceof Test;
         result |= a instanceof Before;
@@ -79,36 +107,56 @@ public class TestMethods {
         return result;
     }
 
+    /* runBefore
+     *    Purpose: Runs the BeforeClass methods
+     * Parameters: none
+     *    Returns: none
+     *    Effects: none
+     */
     public void runBefore() {
         runMeths(MethodType.BEFORE_CLASS);
     }
 
+    /* runAfter
+     *    Purpose: Runs the AfterClass methods
+     * Parameters: none
+     *    Returns: none
+     *    Effects: none
+     */
     public void runAfter() {
         runMeths(MethodType.AFTER_CLASS);
     }
 
+    /* runTests
+     *    Purpose: Runs the tests, along with the before/after methods
+     * Parameters: none
+     *    Returns: A map of each test name to null if the test passed or the
+     *             thrown exception/error that caused the test to fail.
+     *    Effects: none
+     */
     public Map<String, Throwable> runTests() {
         Map<String, Throwable> results = new HashMap<>();
         
-        for (Method t : tests) {
+        for (TestMethod t : tests) {
             runMeths(MethodType.BEFORE);
-            try {
-                t.invoke(o, (Object[])null);
-                results.put(t.getName(), null);
-            } catch (InvocationTargetException ex) {
-                results.put(t.getName(), ex.getCause());
-            } catch (IllegalAccessException ex) {
-                throw new IllegalAccessError();
-            }
+
+            results.put(t.getName(), t.run());
+
+            
             runMeths(MethodType.AFTER);
         }
 
         return results;
     }
 
+    /* runMeths
+     *    Purpose: Runs a specified method list
+     * Parameters: An indicator of what method type to run
+     *    Returns: none
+     *    Effects: none
+     */
     private void runMeths(MethodType mt) {
-
-        List<Method> meths;
+        List<UtilMethod> meths;
         
         if (mt == MethodType.BEFORE_CLASS) {
             meths = before_class;
@@ -119,22 +167,25 @@ public class TestMethods {
         } else if (mt == MethodType.AFTER) {
             meths = after;
         } else {
-            meths = tests;
+            for(TestMethod t : tests) {
+                t.run();
+            }
+            meths = null;
         }
 
-        for (Method m : meths) {
-            try {
-                m.invoke(o, (Object[])null);
-            } catch (InvocationTargetException ex) {
-                throw new BadMethodException();
-            } catch (IllegalAccessException ex) {
-                throw new BadMethodException();
-            }
+        for (UtilMethod m : meths) {
+            m.run();
         }
     }
 
+    /* sort
+     *    Purpose: Sorts the method lists
+     * Parameters: none
+     *    Returns: none
+     *    Effects: Sorts the method lists in-place
+     */
     private void sort() {
-        BiFunction<Method, Method, Integer> comparitor = (o1, o2) -> o1.getName().compareTo(o2.getName());
+        BiFunction<UtilMethod, UtilMethod, Integer> comparitor = (o1, o2) -> o1.getName().compareTo(o2.getName());
         Collections.sort(tests,        comparitor::apply);
         Collections.sort(before_class, comparitor::apply);
         Collections.sort(after_class,  comparitor::apply);
@@ -142,6 +193,12 @@ public class TestMethods {
         Collections.sort(after,        comparitor::apply);
     }
 
+    /* instantiateClass
+     *    Purpose: Creates an object from a reflected class
+     * Parameters: A reflected class
+     *    Returns: A default object of that class.
+     *    Effects: none
+     */
     private Object instantiateClass(Class<?> c) {
         try {
             return c.getConstructor().newInstance();
@@ -152,6 +209,20 @@ public class TestMethods {
         } catch (InvocationTargetException ex) {
             throw new BadClassException();
         } catch (InstantiationException ex) {
+            throw new BadClassException();
+        }
+    }
+
+    /* getClassFromString
+     *    Purpose: Safely gets a class from a string name
+     * Parameters: The name of a class
+     *    Returns: The reflected class object
+     *    Effects: none
+     */
+    private static Class<?> getClassFromString(String name) {
+        try {
+            return Class.forName(name);
+        } catch (ClassNotFoundException ex) {
             throw new BadClassException();
         }
     }

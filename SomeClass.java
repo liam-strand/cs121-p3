@@ -158,7 +158,7 @@ public class SomeClass {
     @Property
     public boolean intGen(@ForAll(name="genInt", times=10) Object i) {
         Integer in = (Integer)i;
-        return in < 20;
+        return in < 15;
     }
 
     public Object genSeven() {

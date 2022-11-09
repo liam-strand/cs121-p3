@@ -19,8 +19,7 @@ public class Unit {
      *    Effects: none
      */
     public static Map<String, Throwable> testClass(String name) {
-        Class<?> c = getClassFromString(name);
-        TestMethods methods = new TestMethods(c);
+        TestMethods methods = new TestMethods(name);
 
         methods.runBefore();
         Map<String, Throwable> results = methods.runTests();
@@ -37,24 +36,8 @@ public class Unit {
      *    Effects: none
      */
     public static Map<String, Object[]> quickCheckClass(String name) {
-        Class<?> c = getClassFromString(name);
-
-        PropertyMethods meths = new PropertyMethods(c);
+        PropertyMethods meths = new PropertyMethods(name);
         
         return meths.run();
-    }
-
-    /* getClassFromString
-     *    Purpose: Safely gets a class from a string name
-     * Parameters: The name of a class
-     *    Returns: The reflected class object
-     *    Effects: none
-     */
-    private static Class<?> getClassFromString(String name) {
-        try {
-            return Class.forName(name);
-        } catch (ClassNotFoundException ex) {
-            throw new BadClassException();
-        }
     }
 }

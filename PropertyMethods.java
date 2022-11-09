@@ -19,9 +19,17 @@ public class PropertyMethods {
      *    Purpose: Initializes the PropertyMethods to contain a sorted list of
      *             @Property methods, the class that we are testing, and an
      *             instance of that class.
+     * Parameters: The name of a class
+     */
+    public PropertyMethods(String name) {
+        this(getClassFromString(name));
+    }
+
+    /* constructor
+     *    Purpose: Initializes the PropertyMethods to contain a sorted list of
+     *             @Property methods, the class that we are testing, and an
+     *             instance of that class.
      * Parameters: A reflected class
-     *    Returns: none
-     *    Effects: none
      */
     public PropertyMethods(Class<?> c) {
         this.o = instantiateClass(c);
@@ -80,6 +88,20 @@ public class PropertyMethods {
         } catch (InvocationTargetException ex) {
             throw new BadClassException();
         } catch (InstantiationException ex) {
+            throw new BadClassException();
+        }
+    }
+
+    /* getClassFromString
+     *    Purpose: Safely gets a class from a string name
+     * Parameters: The name of a class
+     *    Returns: The reflected class object
+     *    Effects: none
+     */
+    private static Class<?> getClassFromString(String name) {
+        try {
+            return Class.forName(name);
+        } catch (ClassNotFoundException ex) {
             throw new BadClassException();
         }
     }
